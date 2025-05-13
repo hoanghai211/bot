@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
+// Icon cho nút GetApp
 const PhoneIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +23,7 @@ const PhoneIcon = () => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="1.5" // Giữ viền nét vẽ rõ hơn
+    strokeWidth="1.5"
   >
     <rect
       x="0.5"
@@ -41,61 +42,41 @@ const PhoneIcon = () => (
   </svg>
 );
 
-
-
 export const Navbar = async () => {
   let session = await auth();
 
   return (
     <>
-     <div className="bg-background absolute top-0 left-0 w-dvw pt-4 px-3 justify-between flex flex-row items-center z-30">
-        <div className="flex flex-row gap-3 items-center">
+      <div className="bg-gradient-to-r from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 backdrop-blur-md p-4 px-6 rounded-b-lg shadow-md flex justify-between items-center z-30">
+        {/* Left Section */}
+        <div className="flex flex-row gap-4 items-center">
           <History user={session?.user} />
-<Button
-  variant="outline"
-  className="py-1 px-4 h-fit font-normal bg-transparent hover:bg-gray-100 flex items-center justify-center gap-2 border border-gray-300 outline-none shadow-none focus:ring-0"
-  style={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-    padding: "4px 16px",
-    border: "1px solid #ccc", // Thêm border nhẹ để không bị mất
-    outline: "none",
-    boxShadow: "none",
-    backgroundColor: "transparent",
-  }}
->
-  <PhoneIcon />
-  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-    GetApp
-  </span>
-</Button>
-
-
-
-
-
+          <Button
+            variant="outline"
+            className="py-1 px-4 h-fit font-medium bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:opacity-90 flex items-center justify-center gap-2 rounded-lg border-none shadow-lg"
+          >
+            <PhoneIcon />
+            <span className="text-sm font-medium">GetApp</span>
+          </Button>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Right Section */}
+        <div className="flex items-center gap-4">
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-     <Button className="py-1.5 px-2 h-fit font-normal bg-transparent hover:bg-transparent border-none shadow-none">
-  <UserIcon className="!text-gray-700 dark:!text-gray-300" />
-</Button>
-
-
-
-
-
+                <Button className="py-2 px-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-full shadow">
+                  <UserIcon className="text-gray-600 dark:text-gray-300" />
+                </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="border-none">
-                <DropdownMenuItem>
+              <DropdownMenuContent
+                align="end"
+                className="rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 p-2"
+              >
+                <DropdownMenuItem className="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md p-2">
                   <ThemeToggle />
                 </DropdownMenuItem>
-                <DropdownMenuItem className="p-1 z-50">
+                <DropdownMenuItem className="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md p-2">
                   <form
                     className="w-full"
                     action={async () => {
@@ -107,7 +88,7 @@ export const Navbar = async () => {
                   >
                     <button
                       type="submit"
-                      className="w-full text-left px-1 py-0.5 text-red-500"
+                      className="w-full text-left text-red-500 hover:text-red-600"
                     >
                       Sign out
                     </button>
@@ -116,10 +97,7 @@ export const Navbar = async () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              className="py-1.5 px-2 h-fit font-normal text-white"
-              asChild
-            >
+            <Button className="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md">
               <Link href="/login">Login</Link>
             </Button>
           )}
