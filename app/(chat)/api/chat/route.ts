@@ -40,9 +40,15 @@ export async function POST(request: Request) {
     onFinish: async ({ responseMessages }) => {
       if (session?.user?.id) {
         try {
+          // Kết hợp hội thoại cũ và mới
+          const combinedMessages = [...coreMessages, ...responseMessages];
+
+          // Chỉ giữ lại 10 câu cuối cùng
+          const limitedMessages = combinedMessages.slice(-10);
+
           await saveChat({
             id,
-            messages: [...coreMessages, ...responseMessages],
+            messages: limitedMessages,
             userId: session.user.id,
           });
         } catch (error) {
