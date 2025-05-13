@@ -146,44 +146,48 @@ export function MultimodalInput({
   );
 
   return (
-    <div className="relative w-full max-w-[50rem] flex flex-col gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-lg">
-      {/* Suggested Actions */}
+    <div className="relative w-full max-w-[50rem] flex flex-col gap-4">
       {messages.length === 0 &&
         attachments.length === 0 &&
         uploadQueue.length === 0 && (
-          <div className="grid sm:grid-cols-2 gap-4 w-full mx-auto">
+          <div className="grid sm:grid-cols-2 gap-4 w-full md:px-0 mx-auto md:max-w-[500px]">
             {suggestedActions.map((suggestedAction, index) => (
-              <motion.button
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ delay: 0.05 * index }}
                 key={index}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={async () => {
-                  append({
-                    role: "user",
-                    content: suggestedAction.action,
-                  });
-                }}
-                className="p-4 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-xl shadow-md hover:shadow-lg transition-all"
+                className={index > 1 ? "hidden sm:block" : "block"}
               >
-                <span className="font-semibold block">{suggestedAction.title}</span>
-                <span className="text-sm">{suggestedAction.label}</span>
-              </motion.button>
+                <button
+                  onClick={async () => {
+                    append({
+                      role: "user",
+                      content: suggestedAction.action,
+                    });
+                  }}
+                  className="border-none bg-gray-100 dark:bg-gray-800 w-full text-left border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-lg p-3 text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 ease-out flex flex-col"
+                >
+                  <span className="font-medium">{suggestedAction.title}</span>
+                  <span className="text-gray-500 dark:text-gray-400">{suggestedAction.label}</span>
+                </button>
+              </motion.div>
             ))}
           </div>
         )}
 
-      {/* File Input */}
       <input
         type="file"
-        className="hidden"
+        className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
         ref={fileInputRef}
         multiple
         onChange={handleFileChange}
+        tabIndex={-1}
       />
 
-      {/* Attachments */}
       {(attachments.length > 0 || uploadQueue.length > 0) && (
-        <div className="flex flex-row gap-2 overflow-x-auto pb-2">
+        <div className="flex flex-row gap-2 overflow-x-scroll pb-2">
           {attachments.map((attachment) => (
             <PreviewAttachment key={attachment.url} attachment={attachment} />
           ))}
@@ -201,20 +205,19 @@ export function MultimodalInput({
         </div>
       )}
 
-      {/* Input Section */}
       <div className="relative">
         <Textarea
           ref={textareaRef}
-          placeholder="Hãy nhập nội dung của bạn..."
+          placeholder="What do you want to know?"
           value={input}
           onChange={handleInput}
-          className="min-h-[40px] w-full resize-none rounded-2xl bg-white border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 transition-all"
+          className="min-h-[40px] w-full resize-none rounded-2xl text-base bg-white dark:bg-[hsl(var(--muted)/.5)] border border-gray-300 dark:border-gray-300 shadow-sm transition-all duration-200 ease-out hover:border-gray-300 dark:hover:border-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400 py-4 px-4"
           rows={3}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();
               if (isLoading) {
-                toast.error("Đang xử lý, vui lòng chờ...");
+                toast.error("Please wait for the model to finish its response!");
               } else {
                 submitForm();
               }
@@ -222,41 +225,41 @@ export function MultimodalInput({
           }}
         />
 
-        {/* Buttons */}
         {isLoading ? (
           <Button
-            className="absolute bottom-3 right-3 bg-red-600 text-white hover:bg-red-700 rounded-full p-3 transition-all hover:scale-105"
+            className="rounded-full p-2 size-8 absolute bottom-3 right-3 bg-gray-800 text-white hover:bg-black transition-all duration-200 ease-out hover:scale-105"
             onClick={(event) => {
               event.preventDefault();
               stop();
             }}
           >
-            <StopIcon size={16} />
+            <StopIcon size={14} />
           </Button>
         ) : (
           <Button
-            className="absolute bottom-3 right-3 bg-green-600 text-white hover:bg-green-700 rounded-full p-3 transition-all hover:scale-105 disabled:opacity-50"
+            className="rounded-full p-2 size-8 absolute bottom-3 right-3 bg-black text-white hover:bg-gray-900 transition-all duration-200 ease-out hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed"
             onClick={(event) => {
               event.preventDefault();
               submitForm();
             }}
             disabled={input.length === 0 || uploadQueue.length > 0}
           >
-            <ArrowUpIcon size={16} />
+            <ArrowUpIcon size={14} />
           </Button>
         )}
 
         <Button
-          className="absolute bottom-3 right-14 bg-gray-200 text-gray-700 border border-gray-300 hover:bg-gray-300 rounded-full p-3 transition-all"
+          className="rounded-full p-2 size-8 absolute bottom-3 right-14 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 ease-out hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed"
           onClick={(event) => {
             event.preventDefault();
             fileInputRef.current?.click();
           }}
+          variant="outline"
           disabled={isLoading}
         >
-          <PaperclipIcon size={16} />
+          <PaperclipIcon size={14} />
         </Button>
       </div>
     </div>
   );
-}
+              }
