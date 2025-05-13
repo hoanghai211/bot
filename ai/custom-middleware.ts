@@ -1,8 +1,8 @@
-import { Experimental_LanguageModelV1Middleware, LanguageModelInput, LanguageModelOutput } from "ai";
+import { Experimental_LanguageModelV1Middleware, LanguageModel } from "ai";
 
 // Middleware tùy chỉnh
 export const customMiddleware: Experimental_LanguageModelV1Middleware = {
-  async execute(input: LanguageModelInput, next): Promise<LanguageModelOutput> {
+  async execute(input: LanguageModel, next) {
     console.log("Input before processing:", input);
 
     // Gửi yêu cầu đến mô hình ngôn ngữ
