@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { auth, signOut } from "@/app/(auth)/auth";
-import { History } from "./history";
+
+import { History } from "./history"; // Đảm bảo file history.tsx đã export History
 import { SlashIcon, MessageIcon, UserIcon } from "./icons";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "../ui/button";
@@ -21,9 +22,17 @@ const PhoneIcon = () => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="1.5"
-    className="text-gray-600 dark:text-gray-300"
+    strokeWidth="1.5" // Giữ viền nét vẽ rõ hơn
   >
+    <rect
+      x="0.5"
+      y="0.5"
+      width="23"
+      height="23"
+      rx="4"
+      fill="none"
+      stroke="none"
+    />
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -32,76 +41,73 @@ const PhoneIcon = () => (
   </svg>
 );
 
+
+
 export const Navbar = async () => {
-  const session = await auth();
+  let session = await auth();
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-background/80 backdrop-blur-sm shadow-md z-40 transition-colors duration-500">
-      <div className="max-w-5xl mx-auto flex items-center justify-between py-3 px-4">
-        {/* Left Section */}
-        <div className="flex items-center gap-4">
-          {/* History Button */}
-          <History user={session?.user} className="hover:scale-105 transform transition" />
+    <>
+     <div className="bg-background absolute top-0 left-0 w-dvw pt-4 px-3 justify-between flex flex-row items-center z-30">
+        <div className="flex flex-row gap-3 items-center">
+          <History user={session?.user} />
+<Button
+  variant="outline"
+  className="py-1 px-4 h-fit font-normal bg-transparent hover:bg-gray-100 flex items-center justify-center gap-2 border border-gray-300 outline-none shadow-none focus:ring-0"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    padding: "4px 16px",
+    border: "1px solid #ccc", // Thêm border nhẹ để không bị mất
+    outline: "none",
+    boxShadow: "none",
+    backgroundColor: "transparent",
+  }}
+>
+  <PhoneIcon />
+  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+    GetApp
+  </span>
+</Button>
 
-          {/* GetApp CTA */}
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 px-4 py-1 text-sm font-medium text-gray-700 dark:text-gray-200 border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-transform duration-200 hover:scale-105"
-          >
-            <PhoneIcon />
-            GetApp
-          </Button>
 
-          {/* Additional icons (upgraded) */}
-          <Link href="/slash" passHref>
-            <a className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <SlashIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-            </a>
-          </Link>
-          <Link href="/messages" passHref>
-            <a className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <MessageIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-              {/* Example badge */}
-              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-semibold leading-none text-white bg-red-500 rounded-full transform translate-x-1/2 -translate-y-1/2">
-                3
-              </span>
-            </a>
-          </Link>
+
+
+
         </div>
 
-        {/* Right Section */}
-        <div className="flex items-center gap-4">
-          {/* Theme Toggle */}
-          <ThemeToggle />
-
-          {/* User / Login */}
+        <div className="flex items-center gap-3">
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-                >
-                  <UserIcon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                </Button>
+     <Button className="py-1.5 px-2 h-fit font-normal bg-transparent hover:bg-transparent border-none shadow-none">
+  <UserIcon className="!text-gray-700 dark:!text-gray-300" />
+</Button>
+
+
+
+
+
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40 p-1">
+              <DropdownMenuContent align="end" className="border-none">
                 <DropdownMenuItem>
-                  <Link href="/profile" className="w-full block">
-                    Profile
-                  </Link>
+                  <ThemeToggle />
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="p-1 z-50">
                   <form
+                    className="w-full"
                     action={async () => {
                       "use server";
-                      await signOut({ redirectTo: "/" });
+                      await signOut({
+                        redirectTo: "/",
+                      });
                     }}
-                    className="w-full"
                   >
                     <button
                       type="submit"
-                      className="w-full text-left text-red-500"
+                      className="w-full text-left px-1 py-0.5 text-red-500"
                     >
                       Sign out
                     </button>
@@ -110,12 +116,15 @@ export const Navbar = async () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild>
+            <Button
+              className="py-1.5 px-2 h-fit font-normal text-white"
+              asChild
+            >
               <Link href="/login">Login</Link>
             </Button>
           )}
         </div>
       </div>
-    </nav>
+    </>
   );
 };
