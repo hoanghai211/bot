@@ -44,7 +44,7 @@ export async function POST(request: Request) {
           const combinedMessages = [...coreMessages, ...responseMessages];
 
           // Chỉ giữ lại 10 câu cuối cùng
-          const limitedMessages = combinedMessages.slice(-10);
+          const limitedMessages = combinedMessages.slice(-5);
 
           await saveChat({
             id,
