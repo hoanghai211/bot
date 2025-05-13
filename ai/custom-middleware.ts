@@ -1,18 +1,19 @@
-import { Experimental_LanguageModelV1Middleware } from "ai";
+import { Experimental_LanguageModelV1Middleware, LanguageModelInput, LanguageModelOutput } from "ai";
 
-// Định nghĩa middleware tùy chỉnh
-export const customMiddleware: Experimental_LanguageModelV1Middleware = (next) => async (input) => {
-  // Bổ sung logic xử lý trước khi yêu cầu (pre-request)
-  console.log("Input before processing:", input);
+// Middleware tùy chỉnh
+export const customMiddleware: Experimental_LanguageModelV1Middleware = {
+  async execute(input: LanguageModelInput, next): Promise<LanguageModelOutput> {
+    console.log("Input before processing:", input);
 
-  // Gửi yêu cầu đến mô hình ngôn ngữ
-  const response = await next(input);
+    // Gửi yêu cầu đến mô hình ngôn ngữ
+    const response = await next(input);
 
-  // Bổ sung logic xử lý sau khi nhận phản hồi (post-response)
-  if (Array.isArray(response.messages)) {
-    response.messages = response.messages.slice(-10); // Giới hạn tin nhắn gần nhất
-  }
+    // Giới hạn danh sách tin nhắn chỉ giữ lại 10 tin gần nhất
+    if (Array.isArray(response.messages)) {
+      response.messages = response.messages.slice(-10);
+    }
 
-  console.log("Response after processing:", response);
-  return response;
+    console.log("Response after processing:", response);
+    return response;
+  },
 };
